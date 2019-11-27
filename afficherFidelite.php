@@ -1,21 +1,9 @@
 
-<?php
-$bdd = new PDO("mysql:host=127.0.0.1;dbname=chat;charset=utf8", "root", "");
 
 
 
-if(isset($_POST['pseudo']) AND isset($_POST['message']) AND !empty($_POST['pseudo']) AND !empty($_POST['message']) )
 
-{
-    $pseudo = htmlspecialchars($_POST['pseudo'] );
-    $message = htmlspecialchars($_POST['message'] );
-$date = date("d-m-Y");
-$heure = date("H:i");
-    $insertmsg = $bdd->prepare('INSERT INTO Chat(pseudo, message) VALUES(?, ?)');
-    $insertmsg->execute(array($pseudo, $message));
-}
 
-?>
 
 
 
@@ -39,8 +27,7 @@ and open the template in the editor.
         <link href="css/morris-0.4.3.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
 
-        <script type="text/javascript" src="js/test.js"></script>
-
+      
 
         <script src="js/modernizr.js"></script>
     </head>
@@ -52,7 +39,7 @@ and open the template in the editor.
             <div class="topbar">
                 <div class="topbar-left">
                     <div class="text-center">
-                        <a href="index.html" class="logo"><img src="images/logo.png" alt=""></a>
+                        <a href="..\..\..\..\admin\tm-shopify048-wheels.myshopify.com\index.html" class="logo"><img src="images/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="pull-left menu-toggle">
@@ -135,9 +122,7 @@ and open the template in the editor.
 
 
                     <li>
-                        <a href="chat.php"><i class="fa fa-sitemap"></i> <span>CHAT ROOM</span><span class="fa arrow"></span></a></li>
-
-                         
+                        <a href="ajoutFidelite.html"><i class="fa fa-sitemap"></i> <span>Fidedelite</span><span class="fa arrow"></span></a>
                         <!--
                         <ul class="nav nav-second-level collapse">
                             <li>
@@ -175,109 +160,65 @@ and open the template in the editor.
                 <div class="content">
                     <div class="container">
                         <div class="page-title">
-                            <h3>CHAT ROOM FOR ADMINS</h3>
+                            <h3>Fidelite Client</h3>
                             <a href="#"><i class="fa fa-plus"></i> Add Widget</a>
                             <a href="#"><i class="fa fa-share"></i> Share</a>
                             <a href="#"><i class="fa fa-envelope"></i> Email</a>
                         </div><!--end page title-->
 
-                             <p class="promo" align="center" class="text-center text-info">Chat Room</p>
+                             <p class="promo" align="center" class="text-center text-info">Listes des Fidelites actuelles</p>
 
 
 
 
 
-                             <form method="post" action="">
-                                 <table align="center">
-                                      <tr>
-        <td height="46" width="35%">
-            <h4> PSEUDO</h4>
-        </td>
-        <td width="63%" height="46"><input type="text" name="pseudo" class="form-control" placeholder="PSEUDO" value="<?php if(isset($pseudo)) {echo $pseudo;}  ?>"></td>
-    </tr>
-
-
-                                     <tr>
-        <td width="35%">
-            <h4>MESSAGE</h4>
-        </td>
-        <td width="63%"><textarea  name="message" class="form-control"  placeholder="Message" ></textarea></td>
-    </tr>
-
-
-
-                                    <tr>
-                                        <td></td>
-        <td ><input type="submit" class="btn btn-primary btn-block" value="ENVOYER MESSAGE"></td>
-    </tr>
+ 
 
 
 
 
-                                 </table>
 
 
+<?PHP
+include "fideliteC.php" ;
+$fidelite1C=new FideliteC();
+$listeFidelites=$fidelite1C->afficherFidelites();
 
-                             </form>
-                             <br><br>
-
-                             <table align="center">
-
-<td>
-                             <?php 
-              
-                               $allmsg = $bdd->query('SELECT * FROM Chat ORDER BY id DESC');
-
-                               while ($msg = $allmsg->fetch()) 
-                                {
-                                   
-                               
-                              ?>
-                              <b> <?php echo $msg['pseudo']; ?>:  </b><?php echo $msg['message']; ?> <br>
-                              <?php 
-                              }
-
-                               ?>
-                           </td>
-                           <td></td>
+//var_dump($listeEmployes->fetchAll());
+?>
+<table border="0" class="table table-hover">
+<tr>
+<td><h3>ID</h3></td>
+<td><h3>ID_CLIENT</h3></td>
+<td><h3>SOLDE</h3></td>
+<td><h3>SUPPRIMER</h3></td>
+<td><h3>MODIFIER</h3></td>
 
 
+</tr>
 
+<?PHP
+foreach($listeFidelites as $row){
+	?>
+	<tr>
+	<td><?PHP echo $row['id']; ?></td>
+	<td><?PHP echo $row['id_client']; ?></td>
+	<td><?PHP echo $row['solde']; ?></td>
+	
+	<td><form method="POST" action="supprimerFidelite.php">
+	<input type="submit" name="supprimer" value="supprimer" class="btn btn-danger btn-block">
+	<input type="hidden" value="<?PHP echo $row['id']; ?>" name="id">
+	</form>
+	</td>
+	<td>
+      <a href="modifierFidelite.php?id=<?PHP echo $row['id']; ?>" ><input type="submit" name="modifier" value="modifier"  class="btn btn-danger btn-block"></a>
+
+</td>
+	</tr>
+	<?PHP
+}
+?>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

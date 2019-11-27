@@ -1,25 +1,3 @@
-
-<?php
-$bdd = new PDO("mysql:host=127.0.0.1;dbname=chat;charset=utf8", "root", "");
-
-
-
-if(isset($_POST['pseudo']) AND isset($_POST['message']) AND !empty($_POST['pseudo']) AND !empty($_POST['message']) )
-
-{
-    $pseudo = htmlspecialchars($_POST['pseudo'] );
-    $message = htmlspecialchars($_POST['message'] );
-$date = date("d-m-Y");
-$heure = date("H:i");
-    $insertmsg = $bdd->prepare('INSERT INTO Chat(pseudo, message) VALUES(?, ?)');
-    $insertmsg->execute(array($pseudo, $message));
-}
-
-?>
-
-
-
-
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -52,7 +30,7 @@ and open the template in the editor.
             <div class="topbar">
                 <div class="topbar-left">
                     <div class="text-center">
-                        <a href="index.html" class="logo"><img src="images/logo.png" alt=""></a>
+                        <a href="..\..\..\..\admin\tm-shopify048-wheels.myshopify.com\index.html" class="logo"><img src="images/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="pull-left menu-toggle">
@@ -135,9 +113,10 @@ and open the template in the editor.
 
 
                     <li>
-                        <a href="chat.php"><i class="fa fa-sitemap"></i> <span>CHAT ROOM</span><span class="fa arrow"></span></a></li>
-
-                         
+                        <a href="ajoutFidelite.html"><i class="fa fa-sitemap"></i> <span>Fidelite</span><span class="fa arrow"></span></a>
+                    </li>
+                         <li>
+                        <a href="afficherFidelite.php"><i class="fa fa-sitemap"></i> <span>Listes des fidelites</span><span class="fa arrow"></span></a></li>
                         <!--
                         <ul class="nav nav-second-level collapse">
                             <li>
@@ -175,106 +154,87 @@ and open the template in the editor.
                 <div class="content">
                     <div class="container">
                         <div class="page-title">
-                            <h3>CHAT ROOM FOR ADMINS</h3>
+                            <h3>Fidelite Client</h3>
                             <a href="#"><i class="fa fa-plus"></i> Add Widget</a>
                             <a href="#"><i class="fa fa-share"></i> Share</a>
                             <a href="#"><i class="fa fa-envelope"></i> Email</a>
                         </div><!--end page title-->
 
-                             <p class="promo" align="center" class="text-center text-info">Chat Room</p>
+                             <p class="promo" align="center" class="text-center text-info">Modifier Fidelite</p>
+
+
+
+
+<?PHP
+include "fidelite.php";
+include "fideliteC.php";
+if (isset($_GET['id'])){
+    $fideliteC=new FideliteC();
+    $result=$fideliteC->recupererFidelite($_GET['id']);
+    foreach($result as $row){
+        $id=$row['id'];
+        $id_client=$row['id_client'];
+        $solde=$row['solde'];
+        
+?>
 
 
 
 
 
-                             <form method="post" action="">
-                                 <table align="center">
-                                      <tr>
+
+        <form  method="POST">
+                                 
+        <table align="center" border="0" width="48%" height="286">
+
+
+                            	 <tr>
         <td height="46" width="35%">
-            <h4> PSEUDO</h4>
+            <h4>  ID FIDELITE</h4>
         </td>
-        <td width="63%" height="46"><input type="text" name="pseudo" class="form-control" placeholder="PSEUDO" value="<?php if(isset($pseudo)) {echo $pseudo;}  ?>"></td>
+        <td width="63%" height="46"><input type="text" name="id" value="<?PHP echo $id ?>" class="form-control" placeholder="ID Fidelite"></td>
+    </tr>
+    <tr>
+        <td height="46" width="35%">
+            <h4>  ID CLIENT</h4>
+        </td>
+        <td width="63%" height="46"><input type="text" name="id_client" value="<?PHP echo $id_client ?>" class="form-control" placeholder="ID Client"></td>
     </tr>
 
-
-                                     <tr>
+     <tr>
         <td width="35%">
-            <h4>MESSAGE</h4>
+            <h4>SOLDE</h4>
         </td>
-        <td width="63%"><textarea  name="message" class="form-control"  placeholder="Message" ></textarea></td>
+        <td width="63%"><input type="number" name="solde" value="<?PHP echo $solde ?>" class="form-control" placeholder="Solde de client" ></td>
     </tr>
 
-
-
-                                    <tr>
-                                        <td></td>
-        <td ><input type="submit" class="btn btn-primary btn-block" value="ENVOYER MESSAGE"></td>
+    
+   
+    <tr>
+        <td height="36" colspan="2"><input type="submit" class="btn btn-primary btn-block" name="modifier" value="modifier"></td>
     </tr>
 
-
-
-
-                                 </table>
-
-
-
-                             </form>
-                             <br><br>
-
-                             <table align="center">
-
-<td>
-                             <?php 
-              
-                               $allmsg = $bdd->query('SELECT * FROM Chat ORDER BY id DESC');
-
-                               while ($msg = $allmsg->fetch()) 
-                                {
-                                   
-                               
-                              ?>
-                              <b> <?php echo $msg['pseudo']; ?>:  </b><?php echo $msg['message']; ?> <br>
-                              <?php 
-                              }
-
-                               ?>
-                           </td>
-                           <td></td>
-
-
+    <tr>
+<td></td>
+<td><input type="hidden" name="id_ini" value="<?PHP echo $_GET['id'];?>"></td>
+</tr>
 
 </table>
+ </form>
+ <br><br>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<?PHP
+    }
+}
+if (isset($_POST['modifier'])){
+    $fidelite=new fidelite($_POST['id'],$_POST['id_client'],$_POST['solde']);
+    $fideliteC->modifierFidelite($fidelite,$_POST['id_ini']);
+    echo $_POST['id_ini'];
+    header('Location: afficherFidelite.php');
+}
+?>
 
 
 
